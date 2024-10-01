@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Utilisateurs{% endblock %}
+
+{% block body %}
+    <div class="container my-3">
+        <h1>Liste des Utilisateurs</h1>
+
+        {% include 'layouts/_flash_message.html.twig' %}
+        <table class="table my-3">
+            <tr>
+                <th>id</th>
+                <th>Email</th>
+                <th>Nom</th>
+                <th>Prénom</th>
+                <th>Role</th>
+                <th>Action</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.lastname }}</td>
+                <td>{{ user.firstname }}</td>
+                <td>
+                    {% if ('ROLE_ADMIN' in user.roles) %}
+                        <span class="text-primary">administrateur</span>
+                    {% elseif ('ROLE_EDITOR' in user.roles)%}
+                        <span class="text-success">éditeur</span>
+                    {% else %}
+                        <span class="text-secondary">client</span>
+                    {% endif %}
+                    {# {% for role in user.roles %}
+                        {{role}}
+                    {% endfor %} #}
+                </td>
+
+
+                <td>
+                    {% if ('ROLE_ADMIN' in user.roles) == false  %}
+                        {% if ('ROLE_EDITOR' in user.roles) == false  %}
+                            <a  onclick="return confirm('voulez-vous attribuer le rôle Éditeur ?')"href="{{path('app_user_add_editor',{'id':user.id})}}"class="btn btn-outline-primary">Ajouter le rôle éditeur</a>
+                        {% else %}
+                            <a onclick="return confirm('voulez-vous supprimez le role Éditeur de cet utilisateur ?')"href="{{path('app_user_remove_editor_role',{'id':user.id})}}" class="btn btn-outline-danger">Supprimer le rôle éditeur</a>
+                        {% endif %}
+                        <a  onclick="return confirm('voulez-vous supprimer cet utilisateur ?')"href="{{path('app_user_remove',{'id':user.id})}}"class="btn btn-danger">Supprimer</a>
+                    {% endif %}
+
+                </td>
+            </tr>
+            {% else %}
+            <p> aucune catégorie à afficher</p>
+            {% endfor %}
+        </table>
+        <a href="{{path('app_register')}}" class="btn btn-outline-primary">Ajouter un utilisateur</a>
+    </div>
+{% endblock %}

@@ -13,7 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class CategoryController extends AbstractController
 {
-    #[Route('/category', name: 'app_category')]
+    #[Route('/admin/category', name: 'app_category')]
     public function index(CategoryRepository $categoryRepository): Response
     {
 
@@ -23,7 +23,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/category/new', name: 'app_category_new')]
+    #[Route('/admin/category/new', name: 'app_category_new')]
     public function addCategory(EntityManagerInterface $em, Request $request): Response
     {
         
@@ -37,6 +37,8 @@ class CategoryController extends AbstractController
 
             $em->persist($category);
             $em->flush();
+
+            $this->addFlash('success', 'La catégorie a été créée');
         
             return $this->redirectToRoute('app_category');
         
@@ -47,7 +49,7 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/category/{id}/update', name: 'app_category_update')]
+    #[Route('/admin/category/{id}/update', name: 'app_category_update')]
     public function update(Category $category, EntityManagerInterface $em, Request $request):Response
     {
 
@@ -57,6 +59,8 @@ class CategoryController extends AbstractController
         if($formCategory->isSubmitted() && $formCategory->isValid()){
 
             $em->flush();
+            $this->addFlash('success', 'La catégorie a été modifiée');
+
             return $this->redirectToRoute('app_category');
 
         }
@@ -66,12 +70,14 @@ class CategoryController extends AbstractController
         ]);
     }
 
-    #[Route('/category/{id}/delete', name: 'app_category_delete')]
+    #[Route('/admin/category/{id}/delete', name: 'app_category_delete')]
     public function delete(Category $category, EntityManagerInterface $em, Request $request):Response
     {
 
         $em->remove($category);
         $em->flush();
+        $this->addFlash('danger', 'La catégorie a été supprimée');
+
         return $this->redirectToRoute('app_category');
 
         
