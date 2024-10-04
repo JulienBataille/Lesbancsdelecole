@@ -19,13 +19,19 @@ class ProductType extends AbstractType
             ->add('name')
             ->add('description')
             ->add('price')
-            ->add('image',FileType::class, [
-                'label'=>'image du produit',
-                'mapped'=>false,
-                'required'=>false,
+            ->add('stock')
+            ->add('subCategories', EntityType::class, [
+                'class' => SubCategory::class,
+                'choice_label' => 'name',
+                'multiple' => true,
+            ])
+            ->add('image', FileType::class, [
+                'label' => 'image du produit',
+                'mapped' => false,
+                'required' => false,
                 'constraints' => [
                     new File([
-                        'maxSize'=>'1024k',
+                        'maxSize' => '1024k',
                         'mimeTypes' => [
                             'image/jpg',
                             'image/png',
@@ -34,14 +40,9 @@ class ProductType extends AbstractType
 
                         ],
                         'maxSizeMessage' => "votre image ne doit pas dépasser 1024Ko",
-                        'mimeTypesMessage' =>"votre image doit être au format valide (jpg, jpeg, png)",
+                        'mimeTypesMessage' => "votre image doit être au format valide (jpg, jpeg, png)",
                     ])
                 ]
-            ])
-            ->add('subCategories', EntityType::class, [
-                'class' => SubCategory::class,
-                'choice_label' => 'name',
-                'multiple' => true,
             ])
         ;
     }

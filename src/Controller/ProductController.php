@@ -2,7 +2,9 @@
 
 namespace App\Controller;
 
+use App\Entity\AddProductHistory;
 use App\Entity\Product;
+use App\Form\AddProductHistoryType;
 use App\Form\ProductType;
 use App\Repository\ProductRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -50,6 +52,14 @@ final class ProductController extends AbstractController
             }
 
             $entityManager->persist($product);
+            $entityManager->flush();
+
+            $stockHistory = new AddProductHistory();
+            $stockHistory->setQte($product->getStock());
+            $stockHistory->setProduct($product);
+            $stockHistory->setCreatedAt(new \DateTimeImmutable());
+
+            $entityManager->persist($stockHistory);
             $entityManager->flush();
 
 
@@ -118,4 +128,22 @@ final class ProductController extends AbstractController
 
         return $this->redirectToRoute('app_product_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/add/product/{id}/stock', name: 'app_product_add', methods: ['POST', 'GET'])]
+    public function addStock($id, EntityManagerInterface $entityManager, Request $request, ProductRepository $productRepository): Response
+    {
+        $addStock = new AddProductHistory();
+
+        $product = $productRepository->find($id);
+
+        $form = $this ->createForm(AddProductHistoryType::class, $addStock);
+        $form->handleRequest($request);
+
+        return $this->render('product/addStock.html.twig',[
+            'form' => $form->createView(),
+            'product' => $product
+        ]);
+
+    }
+
 }
