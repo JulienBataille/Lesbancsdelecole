@@ -7,6 +7,7 @@
 {% block body %}
 	<div class="container my-3">
 		<h1>Ajouter le stock pour : {{product.name}}</h1>
+		{% include "layouts/_flash_message.html.twig" %}
 
 		{{ form_start(form) }}
 		    {{ form_row(form.qte, {'attr':{'class': 'form form-control my-3'}}) }}
